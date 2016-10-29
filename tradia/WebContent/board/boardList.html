@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+
+<table>
+        <caption>(<b>*</b>는 필수 입력 항목입니다.)</caption>
+        <tr>
+            <th class="required">학부모 이름</th>
+            <td>
+                <gl:TextInput id="nomem_nm" value="${nomemberMap.nomem_nm}" clazz="validate[required]" maxLength="50" required="true" />
+                <c:if test="${nomemberMap.inflow eq '10266' || nomemberMap.inflow eq '10269'}">
+                    <a class="btn2" href="javascript:javascript:fnParentTestResult('${nomemberMap.shopping_key}');"><span>학부모 성향 검사 결과</span></a>
+                </c:if>
+            </td>
+            <th>생년월일</th>
+            <td>
+                <gl:DateInput id="birth_de" value="${nomemberMap.birth_de}" />
+                (<gl:RadioGroup id="calendar_gbn" value="${nomemberMap.calendar_gbn}" definedValue="S|양력;L|음력" defaultValue="S" />)
+            </td>
+        </tr>
+        <tr>
+            <th>로그인 아이디</th>
+            <td colspan="3">
+                <gl:TextInput id="login_id" value="${nomemberMap.login_id}" readonly="true" />
+                <c:choose>
+                    <c:when test="${nomemberMap.member_yn eq 'Y'}">
+                    </c:when>
+                    <c:otherwise>
+                    <a class="btn2" href="javascript:javascript:fnUserCarePop();"><span>회원찾기</span></a>
+                    </c:otherwise>
+                </c:choose>
+                <c:if test="${nomemberMap.login_id != '' && nomemberMap.login_id != null}">
+                <a class="btn2" href="javascript:fnParentLogin2('${nomemberMap.login_id}', '${login_pwd }');"><span>학습확인</span></a>
+                <a class="btn2" href="javascript:fnCmdKeep();"><span>연결정보 끊기</span></a>
+                <a class="btn2" href="javascript:javascript:fnReset('${nomemberMap.nomem_id}');"><span>초기화</span></a>
+                </c:if>
+            </td>
+        </tr>
+        <tr>
+            <th>전화번호</th>
+            <td>
+                <gl:TextInput id="tel1" value="${nomemberMap.tel1}" maxLength="4" style="width:50px;" />-
+                <gl:TextInput id="tel2" value="${nomemberMap.tel2}" maxLength="4" style="width:50px;" />-
+                <gl:TextInput id="tel3" value="${nomemberMap.tel3}" maxLength="4" style="width:50px;" />
+                <c:if test="${null != nomemberMap.tel1}">
+                    <a class="callPhone" href="javascript:fnCmdNewConsult('T');">전화걸기</a>
+                </c:if>
+            </td>
+            <th>휴대전화번호</th>
+            <td>
+                <gl:TextInput id="mobile1" value="${nomemberMap.mobile1}" maxLength="4" style="width:50px;" />-
+                <gl:TextInput id="mobile2" value="${nomemberMap.mobile2}" maxLength="4" style="width:50px;" />-
+                <gl:TextInput id="mobile3" value="${nomemberMap.mobile3}" maxLength="4" style="width:50px;" />
+                <c:if test="${null != nomemberMap.mobile1}">
+                    <a class="callPhone" href="javascript:fnCmdNewConsult('M');">전화걸기</a>
+                    <a class="btn" href="javascript:fnNoMemberSMS(${nomemberMap.nomem_id});" ><span>SMS보내기</span></a>
+                    <BR><font color="red">* 부재시, 반드시 문자 발송해주세요!</font>
+                </c:if>
+            </td>
+        </tr>
+        <tr>
+            <th>이메일</th>
+            <td>
+                <gl:TextInput id="email" value="${nomemberMap.email}" clazz="validate[custom[email]] q3" />
+            </td>
+            <th>지역선택</th>
+            <td>
+                <biz:SelectCommonCode id="localarea" value="${nomemberMap.localarea}" prompt="지역선택" gubunCode="10102" />
+            </td>
+        </tr>
+        <tr>
+            <th>집주소</th>
+            <td colspan="3">
+                <gl:TextInput id="zipcode" value="${nomemberMap.zipcode}" readonly="true" />
+                <a class="btn" href="javascript:fnDaumPostcode();"><span>우편번호</span></a>
+                &nbsp;<font color="red">*상담 시 꼭 우편번호를 검색하여 수정해주세요!</font>
+                <br />
+                <gl:TextInput id="addr1" value="${nomemberMap.addr1}" clazz="q3" required="true" readonly="true"/>
+                <gl:TextInput id="addr2" value="${nomemberMap.addr2}" clazz="q3" required="true" />
+            </td>
+        </tr>
+        <tr>
+            <th>대표자녀학년</th>
+            <td colspan="3">
+                <gl:TextInput id="parent_grade" value="${nomemberMap.parent_grade}" maxLength="1" required="true" /> 학년
+            </td>
+        </tr>
+        <tr>
+            <th>자녀정보</th>
+            <td colspan="3"><div id="itemList">
+                <c:forEach var="stuList" items="${studentList}" varStatus="status">
+                <div id="item_${status.index + 1}">
+                    <label><span id="child_no"><strong>자녀${status.index + 1}</strong>&nbsp;&nbsp;&nbsp;</span>
+                        이름 : <input type="text" id="jname${status.index + 1}"       name="prev_jname"       style="width:100px" value="${stuList.nm_kor}" />
+                        학교 : <input type="text" id="schoolname${status.index + 1}" name="prev_schoolname"  style="width:100px" value="${stuList.schoolname}" />
+                        <input type="hidden" id="school_no${status.index + 1}" name="prev_school_no" value="${stuList.school_no}" />
+                        <input type="hidden" id="child_no${status.index + 1}"  name="prev_child_no"  value="${stuList.child_no}" />
+                        <a href="javascript:fnCmdOpenWindowSchool('${status.index + 1}');" title="학교찾기" class="btn"><span>학교찾기</span></a>
+                        
+                        <!--<gl:Select id="jgrade${status.index + 1}" name="prev_jgrade" definedValue="<%=CodeConstants.GBN_GRADE%>" value="${stuList.grade_gbn}" />-->
+                        <gl:Select id="jgrade${status.index + 1}" name="prev_jgrade" definedValue="0|미취학;1|1 학년;2|2 학년;3|3 학년;4|4 학년;5|5 학년;6|6 학년;8|중1;" value="${stuList.grade_gbn}" />
+                        <gl:Select id="group${status.index + 1}"  name="prev_group"  definedValue="<%=CodeConstants.GBN_BAN%>" prompt="반" value="${stuList.class_gbn}" />
+                        <input type="text" id="class_nm${status.index + 1}" name="prev_class_nm" style="width:60px;" value="${stuList.class_nm}" /> 반(한글 입력)&nbsp;&nbsp;&nbsp;
+                        <gl:Select id="gender${status.index + 1}"  name="prev_gender"  definedValue="M|남;W|여" prompt="성별" value="${stuList.gender}" />&nbsp;&nbsp;
+		<%--     	생년월일 : <gl:DateInput id="birth_de" value="${stuList.birth_de}" clazz="validate[optional]" /><br /> --%>
+                        	생년월일 : <gl:DateInput id="stu_birth_de${status.index + 1}"  name="prev_birth_de"  value="${stuList.birth_de}" clazz="validate[optional]" /><br />
+                    </label>
+                </div>
+                </c:forEach>
+                <a class="btn" href="javascript:fnCmdAddChild();"><span>자녀추가</span></a>
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <th>유입경로</th>
+            <td>
+                <gl:Select id="inflow" name="inflow" value="${nomemberMap.inflow}"  prompt="유입경로" />
+            </td>
+            <th>담당 상담교사</th>
+            <td> ${nomemberMap.teacher }
+            </td>
+        </tr>
+        <tr>
+            <th>출하현황</th>
+            <td> 
+                <gl:Select id="shipment" value="${nomemberMap.shipment}" prompt="출하현황" definedValue="10005|임시계정발급(교사용);10001|상품권발급요청;10002|출하완료;10003|회수요청;10004|배송취소;" />                
+            </td>
+            <th>배송희망일</th>
+            <td> 
+                <gl:DateInput id="delivery_dt" value="${nomemberMap.delivery_dt}" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>메모</th>
+            <td colspan="3"> <textarea id="memo" name="memo" style="width:100%;height:100px;font-size:12px; -webkit-ime-mode:active; -moz-ime-mode:active; -ms-ime-mode:active; ime-mode:active;">${nomemberMap.memo}</textarea>
+            </td>
+        </tr>
+
+    
+    </table>
+    
+</body>
+</html>
